@@ -9,6 +9,8 @@ import { useEffect } from "react";
 
 function App() {
     const [users, setUsers] = useState([]);
+    const [showSaveUser, setShowSaveUser] = useState(false);
+    const [forceRefresh, setForceRefresh] = useState(true);
 
     useEffect(() => {
         fetch('http://localhost:3030/jsonstore/users')
@@ -18,8 +20,6 @@ function App() {
             })
             .catch((err) => alert(err.message))
     }, [forceRefresh]);
-
-    const [showSaveUser, setShowSaveUser] = useState(false);
 
     const addUserClickHandler = () => {
         setShowSaveUser(true);
@@ -56,11 +56,11 @@ function App() {
             },
             body: JSON.stringify(userData)
         })
-            .then(response => response.json())
-            .then(result => {
-
-
+            .then(response => {
+                setForceRefresh(state => !state)
+                closeUserModalHandler();
             })
+            .catch(err => alert(err.message))
 
     }
 
