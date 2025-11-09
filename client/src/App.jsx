@@ -4,8 +4,15 @@ import Footer from './components/Footer'
 import Search from './components/Search'
 import UserList from './components/UserList'
 import Pagination from './components/Pagination'
+import SaveUser from './components/SaveUser'
 
 function App() {
+    const [showSaveUser, setShowSaveUser] = useState(false);
+
+    const addUserClickHandler = () => {
+        setShowSaveUser(true);
+    }
+
     return (
         <>
             <Header />
@@ -16,15 +23,20 @@ function App() {
 
                     <UserList />
 
+                    <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
+
                     <Pagination />
 
                 </section>
+
+                {showSaveUser && <SaveUser />}
 
                 {/* User details component  */}
 
                 {/* Create/Edit Form component  */}
 
                 {/* Delete user component  */}
+
             </main>
 
             <Footer />
