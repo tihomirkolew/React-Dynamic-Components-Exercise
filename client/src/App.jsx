@@ -5,8 +5,20 @@ import Search from './components/Search'
 import UserList from './components/UserList'
 import Pagination from './components/Pagination'
 import SaveUser from './components/SaveUser'
+import { useEffect } from "react";
 
 function App() {
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        fetch('http://localhost:3030/jsonstore/users')
+            .then(response => response.json())
+            .then(result => {
+                setUsers(Object.values(result));
+            })
+            .catch((err) => alert(err.message))
+    }, [forceRefresh]);
+
     const [showSaveUser, setShowSaveUser] = useState(false);
 
     const addUserClickHandler = () => {
@@ -17,6 +29,41 @@ function App() {
         setShowSaveUser(false);
     }
 
+    const addUserSubmitHandler = (event) => {
+        // stop page refresh
+        event.preventDefault();
+
+        // get form data
+        const formData = new FormData(event.target);
+
+        // transform form data to object
+        const { country, city, street, streetNumber, ...userData } = Object.fromEntries(formData);
+        userData.address = {
+            country,
+            city,
+            street,
+            streetNumber
+        };
+
+        userData.createdAt = new Date().toISOString()
+        userData.updatedAt = new Date().toISOString()
+
+        // Create new user request
+        fetch('http://localhost:3030/jsonstore/users', {
+            method: 'POST',
+            headers: {
+                'content-type': 'application-json',
+            },
+            body: JSON.stringify(userData)
+        })
+            .then(response => response.json())
+            .then(result => {
+
+
+            })
+
+    }
+
     return (
         <>
             <Header />
@@ -25,7 +72,7 @@ function App() {
                 <section className="card users-container">
                     <Search />
 
-                    <UserList />
+                    <UserList users={users} />
 
                     <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 
@@ -33,7 +80,11 @@ function App() {
 
                 </section>
 
-                {showSaveUser && <SaveUser onClose={closeUserModalHandler} />}
+                {showSaveUser &&
+                    <SaveUser
+                        onClose={closeUserModalHandler}
+                        onSubmit={addUserSubmitHandler}
+                    />}
 
                 {/* User details component  */}
 
