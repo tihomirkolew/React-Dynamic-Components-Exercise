@@ -13,6 +13,10 @@ function App() {
         setShowSaveUser(true);
     }
 
+    const closeUserModalHandler = () => {
+        setShowSaveUser(false);
+    }
+
     return (
         <>
             <Header />
@@ -29,7 +33,7 @@ function App() {
 
                 </section>
 
-                {showSaveUser && <SaveUser />}
+                {showSaveUser && <SaveUser onClose={closeUserModalHandler} />}
 
                 {/* User details component  */}
 
