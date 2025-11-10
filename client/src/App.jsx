@@ -4,13 +4,13 @@ import Footer from './components/Footer'
 import Search from './components/Search'
 import UserList from './components/UserList'
 import Pagination from './components/Pagination'
-import SaveUser from './components/SaveUser'
+import UserSave from './components/UserSave'
 import { useEffect } from "react";
 
 function App() {
     const [users, setUsers] = useState([]);
     const [showSaveUser, setShowSaveUser] = useState(false);
-    const [forceRefresh, setForceRefresh] = useState(true);
+    const [refresh, setRefresh] = useState(true);
     
     useEffect(() => {
         fetch('http://localhost:3030/jsonstore/users')
@@ -19,7 +19,11 @@ function App() {
                 setUsers(Object.values(result));
             })
             .catch((err) => alert(err.message))
-    }, [forceRefresh]);
+    }, [refresh]);
+
+    const forceUserRefresh = () => {
+        setRefresh(state => !state);
+    }
 
     const addUserClickHandler = () => {
         setShowSaveUser(true);
@@ -57,7 +61,6 @@ function App() {
             body: JSON.stringify(userData)
         })
             .then(response => {
-                setForceRefresh(state => !state)
                 closeUserModalHandler();
             })
             .catch(err => alert(err.message))
@@ -72,7 +75,7 @@ function App() {
                 <section className="card users-container">
                     <Search />
 
-                    <UserList users={users} />
+                    <UserList users={users} forceUserRefresh={forceUserRefresh}/>
 
                     <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 
@@ -81,7 +84,7 @@ function App() {
                 </section>
 
                 {showSaveUser &&
-                    <SaveUser
+                    <UserSave
                         onClose={closeUserModalHandler}
                         onSubmit={addUserSubmitHandler}
                     />}
