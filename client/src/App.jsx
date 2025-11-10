@@ -11,7 +11,8 @@ function App() {
     const [users, setUsers] = useState([]);
     const [showSaveUser, setShowSaveUser] = useState(false);
     const [refresh, setRefresh] = useState(true);
-    
+    const [sortDescending, setSortDescending] = useState(true);
+
     useEffect(() => {
         fetch('http://localhost:3030/jsonstore/users')
             .then(response => response.json())
@@ -23,14 +24,27 @@ function App() {
 
     const forceUserRefresh = () => {
         setRefresh(state => !state);
-    }
+    };
 
     const addUserClickHandler = () => {
         setShowSaveUser(true);
-    }
+    };
 
     const closeUserModalHandler = () => {
         setShowSaveUser(false);
+    };
+
+    const sortUserHandler = () => {
+        setSortDescending(state => !state);
+
+        if (sortDescending) {
+            setUsers(state => [...state].sort((userA, userB) => new Date(userA.createdAt) - new Date(userB.createdAt)));
+            return;
+        } else {
+            setUsers(state => [...state].sort((userA, userB) => new Date(userB.createdAt) - new Date(userA.createdAt)));
+            return;
+        }
+
     }
 
     const addUserSubmitHandler = (event) => {
@@ -75,7 +89,12 @@ function App() {
                 <section className="card users-container">
                     <Search />
 
-                    <UserList users={users} forceUserRefresh={forceUserRefresh}/>
+                    <UserList
+                        users={users}
+                        forceUserRefresh={forceUserRefresh}
+                        onSort={sortUserHandler}
+                        sortDescending={sortDescending}
+                    />
 
                     <button className="btn-add btn" onClick={addUserClickHandler}>Add new user</button>
 

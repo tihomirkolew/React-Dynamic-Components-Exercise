@@ -7,6 +7,8 @@ import UserSave from "./UserSave";
 export default function UserList({
     users,
     forceUserRefresh,
+    onSort,
+    sortDescending,
 }) {
     const [showUserDetails, setShowUserDetails] = useState(false);
     const [showUserDelete, setShowUserDelete] = useState(false);
@@ -41,7 +43,7 @@ export default function UserList({
 
         const formData = new FormData(event.target);
 
-        const {country, city, street, streetNumber, ...userData} = Object.fromEntries(formData);
+        const { country, city, street, streetNumber, ...userData } = Object.fromEntries(formData);
 
         userData.address = {
             country,
@@ -111,7 +113,7 @@ export default function UserList({
                                 </path>
                             </svg>
                         </th>
-                        <th>
+                        <th onClick={onSort}>
                             Created
                             <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="arrow-down"
                                 className="icon active-icon svg-inline--fa fa-arrow-down Table_icon__+HHgn" role="img"
